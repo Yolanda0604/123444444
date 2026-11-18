@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>打 call 应援箱</title>
+<style>
+:root{
+  --bg:#140810; --ink:#fff1f6; --pink:#ff4f93; --gold:#ffd56a; --paper:#fff6ea;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei","PingFang SC",sans-serif;}
+body{
+  min-height:100vh; color:var(--ink);
+  background:
+    radial-gradient(900px 380px at 50% -8%, rgba(255,79,147,.42), transparent 62%),
+    radial-gradient(640px 320px at 100% 100%, rgba(90,30,140,.32), transparent 55%),
+    var(--bg);
+}
+.sign{
+  width:max-content; max-width:calc(100% - 28px);
+  margin:22px auto 0;
+  filter:drop-shadow(0 18px 22px rgba(0,0,0,.5));
+}
+.bulbrow{
+  height:16px; margin:0 6px;
+  background-image:radial-gradient(circle at 8px 8px, #fff 0 1.4px, #ffe7a8 2.2px, #c9842a 3.4px, #3a240c 4.6px, transparent 6px);
+  background-size:22px 16px; background-repeat:repeat-x;
+  filter:drop-shadow(0 0 4px rgba(255,213,106,.85));
+}
+.plate{
+  display:flex; align-items:center; justify-content:center; gap:16px;
+  padding:12px 22px 14px;
+  background:
+    linear-gradient(180deg, rgba(255,79,147,.16), transparent 42%),
+    linear-gradient(90deg, #1a0a12, #2c1222 18%, #2c1222 82%, #1a0a12);
+  border-left:3px solid var(--gold); border-right:3px solid var(--gold);
+}
+.wand{
+  position:relative; width:10px; height:74px; flex:none; border-radius:8px;
+  background:linear-gradient(#fff, #ffd56a 34%, #ff4f93 78%);
+  box-shadow:0 0 14px rgba(255,79,147,.9);
+}
+.wand::after{
+  content:""; position:absolute; left:50%; top:-10px; width:26px; height:26px;
+  transform:translateX(-50%); border-radius:50%;
+  background:radial-gradient(circle at 35% 35%, #fff, #ffe08a 42%, #ff4f93 74%);
+  box-shadow:0 0 14px #ffd56a, 0 0 26px #ff4f93;
+}
+.plate h1{display:flex; gap:10px; margin:0;}
+.plate h1 span{
+  width:84px; height:92px; display:grid; place-items:center;
+  font-size:60px; font-weight:900; line-height:1; color:#fff;
+  border-radius:16px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.22), transparent 52%),
+    linear-gradient(180deg, #4a1832, #160810);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,213,106,.5),
+    inset 0 0 22px rgba(255,79,147,.45),
+    0 7px 0 #3a1020;
+  text-shadow:0 0 8px rgba(255,79,147,1), 0 0 18px rgba(255,79,147,.75);
+}
+.plate h1 span:nth-child(2){
+  color:#ffe7a8;
+  text-shadow:0 0 8px rgba(255,213,106,1), 0 0 18px rgba(255,79,147,.55);
+}
+.wrap{max-width:1080px; margin:0 auto; padding:16px 18px 42px;}
+.desk{
+  border-radius:22px; overflow:hidden;
+  box-shadow:0 22px 48px rgba(0,0,0,.48);
+}
+.mixer{
+  display:flex; flex-direction:column; gap:12px;
+  padding:14px 14px 12px;
+  background:linear-gradient(180deg, #2a1222, #1a0c16);
+}
+.line{display:flex; flex-wrap:wrap; gap:10px 12px; align-items:flex-end;}
+.line-slogan{border-left:3px solid var(--gold); padding-left:10px;}
+.line-fan{border-left:3px solid var(--pink); padding-left:10px;}
+.field{display:flex; flex-direction:column; gap:4px; min-width:96px;}
+.field span{font-size:12px; letter-spacing:.08em; color:var(--gold);}
+.line-fan .field span{color:#ffb3d4;}
+.field input, .field select{
+  background:#140810; color:var(--ink); border:0; border-bottom:2px solid rgba(255,79,147,.55);
+  border-radius:8px; padding:8px 10px; font-size:15px; outline:none; min-width:0;
+}
+.field input:focus, .field select:focus{border-bottom-color:var(--gold);}
+.field.grow{flex:1; min-width:160px;}
+.field.short{width:108px;}
+.btns{display:flex; gap:8px; align-items:center; padding-bottom:1px;}
+button{
+  border:0; cursor:pointer; border-radius:999px; padding:10px 16px; font-size:14px;
+  background:#3a142c; color:var(--ink);
+}
+button.hot{
+  background:linear-gradient(135deg, #ff4f93, #ffd56a); color:#2a1020; font-weight:800;
+  box-shadow:0 0 16px rgba(255,79,147,.4);
+}
+.err{min-height:0; color:#ffb3d4; font-size:13px; padding:8px 4px 0;}
+.err:empty{display:none;}
+.stage{
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255,213,106,.22), transparent 46%),
+    linear-gradient(#2a1024, #12060f 72%);
+}
+.curtain{height:18px; background:repeating-linear-gradient(90deg, #7a1848 0 16px, #4c0e30 16px 32px);}
+.scene{
+  display:grid; grid-template-columns:minmax(280px, 380px) minmax(0, 1fr);
+  gap:16px; padding:16px 16px 8px; align-items:stretch;
+}
+.poster{
+  background:var(--paper); color:#3a1830; border-radius:4px 4px 16px 16px;
+  min-height:390px; max-height:540px; padding:16px 14px 12px;
+  display:flex; flex-direction:column;
+  box-shadow:8px 14px 0 rgba(0,0,0,.35);
+  background-image:radial-gradient(circle at 10px 0, transparent 7px, var(--paper) 8px);
+  background-size:20px 12px; background-repeat:repeat-x;
+}
+.show{font-size:11px; letter-spacing:.42em; color:#c45b86;}
+.poster h2{
+  font-size:clamp(28px, 4vw, 40px); line-height:1.15; margin-top:4px;
+  letter-spacing:.04em; overflow-wrap:anywhere;
+}
+.slogan{
+  margin-top:8px; padding:2px 8px; border-left:3px solid var(--gold);
+  min-height:1.45em; font-size:22px; font-weight:800; color:#e23b78; line-height:1.35;
+  overflow-wrap:anywhere;
+}
+.slogan.hit{animation:glow .7s ease;}
+@keyframes glow{from{background:rgba(255,213,106,.45)}to{background:transparent}}
+.poster.from-slogan .slogan{box-shadow:0 0 0 2px var(--gold); border-radius:6px;}
+.roster{
+  list-style:none; margin-top:12px; padding:2px 2px 2px 8px;
+  border-left:3px solid var(--pink);
+  min-height:96px; overflow:auto;
+  display:flex; flex-direction:column; gap:4px;
+}
+.roster li{
+  display:flex; align-items:center; gap:8px;
+  padding:5px 6px; border-radius:8px; background:rgba(90,30,60,.06);
+}
+.roster li.fresh{animation:rowin 1s ease;}
+@keyframes rowin{from{background:rgba(255,213,106,.55)}to{background:rgba(90,30,60,.06)}}
+.roster .line{
+  flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  font-size:13px;
+}
+.roster em{flex:none; font-style:normal; font-size:12px; color:#c45b86; letter-spacing:.06em;}
+.poster.from-fan .roster{box-shadow:0 0 0 2px var(--pink); border-radius:8px;}
+.meters{
+  margin-top:auto; padding-top:10px;
+  display:flex; align-items:flex-end; justify-content:space-between; gap:8px;
+}
+.leds{display:flex; gap:16px; align-items:flex-end; min-height:36px;}
+.leds div{display:flex; flex-direction:column; gap:2px;}
+.leds div[hidden]{display:none;}
+.leds span{font-size:11px; letter-spacing:.2em; color:#c45b86;}
+.leds strong{
+  font-size:28px; line-height:1; color:#e23b78; font-variant-numeric:tabular-nums;
+}
+.leds strong.hit{animation:glow .7s ease;}
+.crowd{
+  min-width:0; align-self:end;
+  display:flex; flex-wrap:nowrap; align-items:flex-end; justify-content:center;
+  gap:12px; min-height:300px; overflow-x:auto; overflow-y:hidden;
+  padding:8px 4px 12px;
+}
+.crowd.many{justify-content:flex-start;}
+.stage.from-fan .crowd{box-shadow:inset 0 0 0 2px rgba(255,79,147,.55); border-radius:12px;}
+.crowd::-webkit-scrollbar{height:8px;}
+.crowd::-webkit-scrollbar-thumb{background:rgba(255,79,147,.55); border-radius:8px;}
+.fan{flex:0 0 88px; width:88px; display:flex; flex-direction:column; align-items:center;}
+.fan.dim{opacity:.35;}
+.light{
+  width:78px; border-radius:12px 12px 6px 6px; text-align:center;
+  padding:8px 4px 6px; color:#2a1020;
+  background:linear-gradient(#ffe1f0, #ff4f93 70%, #9a1860);
+  box-shadow:0 0 14px rgba(255,79,147,.4);
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-end;
+}
+.fan.loud .light{
+  background:linear-gradient(#fff6d8, #ffd56a 42%, #ff4f93);
+  box-shadow:0 0 22px rgba(255,213,106,.75);
+}
+.light b, .light em, .light small{
+  display:block; max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.light b{font-size:15px;}
+.light em{font-style:normal; font-size:12px; margin-top:2px; font-weight:700;}
+.light small{font-size:11px; letter-spacing:.08em; margin-top:2px;}
+.dots{display:flex; justify-content:center; gap:3px; margin-top:6px;}
+.dots i{width:6px; height:6px; border-radius:50%; background:#fff; opacity:.35;}
+.dots i.on{opacity:1; box-shadow:0 0 6px #fff;}
+.stick{width:8px; height:42px; border-radius:4px; background:linear-gradient(#fff, #ffd56a, #ff4f93);}
+.floor{
+  height:16px; margin:0 16px 14px; border-radius:0 0 40px 40px;
+  background:linear-gradient(#3a1830, #1a0a14);
+}
+.wave{display:none; gap:3px; align-items:flex-end; height:16px; margin-left:8px;}
+.wave i{width:3px; background:#2a1020; border-radius:2px; animation:wv .8s ease-in-out infinite;}
+.wave i:nth-child(2){animation-delay:.1s}.wave i:nth-child(3){animation-delay:.15s}
+.wave i:nth-child(4){animation-delay:.2s}.wave i:nth-child(5){animation-delay:.28s}
+@keyframes wv{0%,100%{height:4px}50%{height:16px}}
+button.playing .wave{display:inline-flex;}
+audio{display:none;}
+@media(max-width:860px){
+  .scene{grid-template-columns:1fr;}
+  .plate h1 span{width:64px; height:72px; font-size:44px;}
+  .poster{max-height:none;}
+}
+</style>
+</head>
+<body>
+<header class="sign">
+  <div class="bulbrow"></div>
+  <div class="plate">
+    <span class="wand" aria-hidden="true"></span>
+    <h1><span>应</span><span>援</span><span>箱</span></h1>
+    <span class="wand" aria-hidden="true"></span>
+  </div>
+  <div class="bulbrow"></div>
+</header>
+<main class="wrap">
+  <div class="desk">
+    <div class="mixer">
+      <div class="line line-slogan">
+        <label class="field"><span>爱豆</span><input id="idol" value="小星" autocomplete="off"></label>
+        <label class="field"><span>口气</span>
+          <select id="style">
+            <option>热血</option>
+            <option>温柔</option>
+            <option>中二</option>
+          </select>
+        </label>
+        <label class="field grow"><span>句尾加上</span><input id="extras" placeholder="走花路，大发" autocomplete="off"></label>
+        <label class="field"><span>句首加上</span><input id="prefix" placeholder="♥" autocomplete="off"></label>
+      </div>
+      <div class="line line-fan">
+        <label class="field"><span>粉丝</span><input id="fan" placeholder="小美" autocomplete="off"></label>
+        <label class="field short"><span>分数</span><input id="score" type="number" value="140"></label>
+        <label class="field"><span>灯牌顺序</span>
+          <select id="by">
+            <option value="score">分数高的在左</option>
+            <option value="star">星星多的在左</option>
+            <option value="name">名字短的在左</option>
+          </select>
+        </label>
+        <div class="btns">
+          <button class="hot" id="join" type="button">装进箱子</button>
+          <button id="refresh" type="button">再看一次</button>
+        </div>
+      </div>
+    </div>
+    <p class="err" id="err"></p>
+    <section class="stage" id="stage">
+      <div class="curtain"></div>
+      <div class="scene">
+        <article class="poster" id="poster">
+          <div class="show">LIVE</div>
+          <h2 id="idolName">小星</h2>
+          <div class="slogan" id="bigSlogan"></div>
+          <ul class="roster" id="roster"></ul>
+          <footer class="meters">
+            <div class="leds">
+              <div id="totalBox" hidden><span>全场</span><strong id="total"></strong></div>
+              <div id="passBox" hidden><span>达标</span><strong id="pass"></strong></div>
+            </div>
+            <button class="hot" id="speak" type="button">喊出来<span class="wave" id="wave"><i></i><i></i><i></i><i></i><i></i></span></button>
+          </footer>
+        </article>
+        <div class="crowd" id="crowd"></div>
+      </div>
+      <div class="floor"></div>
+    </section>
+  </div>
+  <audio id="player"></audio>
+</main>
+<script>
+var ticket = 0;
+var timer = 0;
+var lastPoster = "";
+var pendingFan = "";
+var lastSlogan = "";
+var lastTotal = null;
+var lastPass = null;
+
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function extrasOf(){
+  return document.getElementById("extras").value.replace(/，/g, ",").split(",")
+    .map(function(s){ return s.trim(); }).filter(Boolean);
+}
+function query(){
+  return "idol=" + encodeURIComponent(document.getElementById("idol").value)
+    + "&style=" + encodeURIComponent(document.getElementById("style").value)
+    + "&extras=" + encodeURIComponent(document.getElementById("extras").value)
+    + "&prefix=" + encodeURIComponent(document.getElementById("prefix").value)
+    + "&by=" + encodeURIComponent(document.getElementById("by").value);
+}
+function showErr(text){
+  document.getElementById("err").textContent = text || "";
+}
+function starDots(n){
+  var html = "";
+  var count = typeof n === "number" ? n : 0;
+  for(var i = 0; i < 5; i++) html += '<i class="' + (i < count ? "on" : "") + '"></i>';
+  return html;
+}
+function flash(el){
+  if(!el) return;
+  el.classList.remove("hit");
+  void el.offsetWidth;
+  el.classList.add("hit");
+}
+function posterRows(poster){
+  var lines = String(poster || "").split("\n");
+  var body = [];
+  var on = false;
+  for(var i = 0; i < lines.length; i++){
+    if(lines[i].indexOf("到场粉丝") >= 0){ on = true; continue; }
+    if(!on) continue;
+    var text = lines[i].trim();
+    if(!text || text.indexOf("已用热血") >= 0) continue;
+    body.push(text);
+  }
+  return body;
+}
+function rosterItems(pack){
+  var cards = (pack && pack.cards) || [];
+  var body = posterRows(pack && pack.poster);
+  if(body.length && body.length >= cards.length){
+    return body.map(function(text, i){
+      var card = cards[i] || {};
+      return {line: text, tag: card.tag || "", fan: card.fan || ""};
+    });
+  }
+  if(cards.length){
+    return cards.map(function(c){
+      return {line: c.line || c.fan || "", tag: c.tag || "", fan: c.fan || ""};
+    });
+  }
+  return body.map(function(text){
+    return {line: text, tag: "", fan: ""};
+  });
+}
+function render(pack){
+  showErr("");
+  var cards = (pack && pack.cards) || [];
+  var poster = (pack && pack.poster) || "";
+  lastPoster = poster;
+  var idol = document.getElementById("idol").value.trim() || "小星";
+  document.getElementById("idolName").textContent = idol;
+  var slogan = "";
+  var parts = poster.split("\n");
+  if(parts.length > 1) slogan = parts[1];
+  var sloganEl = document.getElementById("bigSlogan");
+  if(slogan !== lastSlogan){
+    lastSlogan = slogan;
+    sloganEl.textContent = slogan;
+    if(slogan) flash(sloganEl);
+  } else if(!sloganEl.textContent){
+    sloganEl.textContent = slogan;
+  }
+  var items = rosterItems(pack);
+  var roster = document.getElementById("roster");
+  roster.innerHTML = items.map(function(item){
+    var fresh = pendingFan && (item.fan === pendingFan || item.line.indexOf(pendingFan) >= 0);
+    return '<li class="' + (fresh ? "fresh" : "") + '"><span class="line">' + esc(item.line) + '</span><em>' + esc(item.tag) + '</em></li>';
+  }).join("");
+  var summary = (pack && pack.summary) || {};
+  paintMeter("totalBox", "total", summary.total, "lastTotal");
+  paintMeter("passBox", "pass", summary.pass, "lastPass");
+  var tops = summary.tops;
+  var dimOn = Array.isArray(tops);
+  var loudest = -1;
+  cards.forEach(function(c){ if((c.score || 0) > loudest) loudest = c.score; });
+  var crowd = document.getElementById("crowd");
+  crowd.innerHTML = cards.map(function(c){
+    var h = 96 + (c.stars || 0) * 14;
+    var cls = "fan";
+    if(c.score === loudest && cards.length) cls += " loud";
+    if(dimOn && tops.indexOf(c.fan) < 0) cls += " dim";
+    var tag = c.tag ? "<small>" + esc(c.tag) + "</small>" : "";
+    return '<div class="' + cls + '" title="' + esc(c.slogan || c.fan || "") + '">'
+      + '<div class="light" style="min-height:' + h + 'px"><b>' + esc(c.fan || "") + '</b><em>' + esc(c.score != null ? c.score : "") + '</em>' + tag
+      + '<div class="dots">' + starDots(c.stars) + '</div></div><div class="stick"></div></div>';
+  }).join("");
+  crowd.classList.toggle("many", crowd.scrollWidth > crowd.clientWidth + 4);
+}
+function paintMeter(boxId, numId, value, memory){
+  var box = document.getElementById(boxId);
+  var num = document.getElementById(numId);
+  if(value === null || value === undefined){
+    box.hidden = true;
+    return;
+  }
+  box.hidden = false;
+  if(memory === "lastTotal" && value !== lastTotal){
+    lastTotal = value;
+    num.textContent = value;
+    flash(num);
+  } else if(memory === "lastPass" && value !== lastPass){
+    lastPass = value;
+    num.textContent = value;
+    flash(num);
+  } else {
+    num.textContent = value;
+  }
+}
+function refresh(){
+  var mine = ++ticket;
+  fetch("/api/board?" + query()).then(function(r){ return r.json(); }).then(function(pack){
+    if(mine !== ticket) return;
+    render(pack);
+  }).catch(function(){
+    if(mine !== ticket) return;
+    showErr("没有连上。请先运行本文件夹里的 app.py。");
+  });
+}
+function schedule(){
+  clearTimeout(timer);
+  timer = setTimeout(refresh, 220);
+}
+document.getElementById("idol").addEventListener("input", function(){
+  document.getElementById("idolName").textContent = this.value.trim() || "小星";
+  schedule();
+});
+["style", "extras", "prefix"].forEach(function(id){
+  var el = document.getElementById(id);
+  el.addEventListener("input", schedule);
+  el.addEventListener("change", schedule);
+});
+["idol", "style", "extras", "prefix"].forEach(function(id){
+  var el = document.getElementById(id);
+  el.addEventListener("focus", function(){ document.getElementById("poster").classList.add("from-slogan"); });
+  el.addEventListener("blur", function(){ document.getElementById("poster").classList.remove("from-slogan"); });
+});
+["fan", "score", "by"].forEach(function(id){
+  var el = document.getElementById(id);
+  el.addEventListener("focus", function(){
+    document.getElementById("poster").classList.add("from-fan");
+    document.getElementById("stage").classList.add("from-fan");
+  });
+  el.addEventListener("blur", function(){
+    document.getElementById("poster").classList.remove("from-fan");
+    document.getElementById("stage").classList.remove("from-fan");
+  });
+});
+document.getElementById("join").onclick = function(){
+  pendingFan = document.getElementById("fan").value.trim();
+  var mine = ++ticket;
+  fetch("/api/join", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      idol:document.getElementById("idol").value,
+      style:document.getElementById("style").value,
+      extras:extrasOf(),
+      prefix:document.getElementById("prefix").value,
+      fan:document.getElementById("fan").value,
+      score:document.getElementById("score").value,
+      by:document.getElementById("by").value
+    })
+  }).then(function(r){ return r.json(); }).then(function(pack){
+    if(mine !== ticket) return;
+    render(pack);
+    if(pendingFan) document.getElementById("fan").value = "";
+  }).catch(function(){
+    if(mine !== ticket) return;
+    showErr("没有连上。请先运行本文件夹里的 app.py。");
+  });
+};
+document.getElementById("fan").addEventListener("keydown", function(e){
+  if(e.key === "Enter") document.getElementById("join").click();
+});
+document.getElementById("refresh").onclick = refresh;
+document.getElementById("by").onchange = refresh;
+document.getElementById("speak").onclick = function(){
+  var text = lastPoster;
+  fetch("/api/speak", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({text:text})
+  }).then(function(r){ return r.json(); }).then(function(data){
+    var btn = document.getElementById("speak");
+    if(!data.ok){
+      showErr(data.text || "没有喊出来。");
+      btn.classList.remove("playing");
+      return;
+    }
+    showErr("");
+    btn.classList.add("playing");
+    var player = document.getElementById("player");
+    player.src = data.url + "?t=" + Date.now();
+    player.play();
+    player.onended = function(){ btn.classList.remove("playing"); };
+  }).catch(function(){
+    showErr("没有连上。请先运行本文件夹里的 app.py。");
+  });
+};
+refresh();
+</script>
+</body>
+</html>
